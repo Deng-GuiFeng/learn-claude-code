@@ -44,10 +44,10 @@ if os.getenv("ANTHROPIC_BASE_URL"):
 WORKDIR = Path.cwd()
 client = Anthropic(base_url=os.getenv("ANTHROPIC_BASE_URL"))
 MODEL = os.environ["MODEL_ID"]
-SKILLS_DIR = WORKDIR / ".skills"
+SKILLS_DIR = WORKDIR / "skills"
 
 
-# -- SkillLoader: parse .skills/*.md files with YAML frontmatter --
+# -- SkillLoader: parse skills/*/SKILL.md files with YAML frontmatter --
 class SkillLoader:
     def __init__(self, skills_dir: Path):
         self.skills_dir = skills_dir
@@ -57,8 +57,8 @@ class SkillLoader:
     def _load_all(self):
         if not self.skills_dir.exists():
             return
-        for f in sorted(self.skills_dir.glob("*.md")):
-            name = f.stem
+        for f in sorted(self.skills_dir.glob("*/SKILL.md")):
+            name = f.parent.name
             text = f.read_text()
             meta, body = self._parse_frontmatter(text)
             self.skills[name] = {"meta": meta, "body": body, "path": str(f)}
