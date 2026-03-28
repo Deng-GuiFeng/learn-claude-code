@@ -186,6 +186,9 @@ def agent_loop(messages: list):
         )
         messages.append({"role": "assistant", "content": response.content})
         if response.stop_reason != "tool_use":
+            for block in response.content:
+                if hasattr(block, "text"):
+                    print(block.text)
             return
         results = []
         for block in response.content:
