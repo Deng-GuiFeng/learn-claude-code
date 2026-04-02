@@ -112,7 +112,7 @@ def auto_compact(messages: list) -> list:
             "Be concise but preserve critical details.\n\n" + conversation_text}],
         max_tokens=2000,
     )
-    summary = response.content[0].text
+    summary = next((b.text for b in response.content if hasattr(b, "text")), "")
     # Replace all messages with compressed summary
     return [
         {"role": "user", "content": f"[Conversation compressed. Transcript: {transcript_path}]\n\n{summary}"},
@@ -205,6 +205,9 @@ def agent_loop(messages: list):
         )
         messages.append({"role": "assistant", "content": response.content})
         if response.stop_reason != "tool_use":
+            for block in response.content:
+                if hasattr(block, "text"):
+                    print(block.text)
             return
         results = []
         manual_compact = False
