@@ -252,7 +252,7 @@ def auto_compact(messages: list) -> list:
         messages=[{"role": "user", "content": f"Summarize for continuity:\n{conv_text}"}],
         max_tokens=2000,
     )
-    summary = resp.content[0].text
+    summary = next((b.text for b in resp.content if hasattr(b, "text")), "") or "No summary generated."
     return [
         {"role": "user", "content": f"[Compressed. Transcript: {path}]\n{summary}"},
     ]
